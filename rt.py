@@ -8,6 +8,9 @@ from selenium.webdriver.common.by import By
 # from webdriver_manager.chrome import ChromeDriverManager
 import undetected_chromedriver as uc
 import requests
+import cloudscraper
+# from bs4 import BeautifulSoup
+from lxml import html
 
 # 配置路径
 REMOTE_DIR = "files/remote"
@@ -34,6 +37,42 @@ def init_driver():
     driver = uc.Chrome(options=options)
 
     return driver
+
+
+def cf():
+    # 创建 cloudscraper 实例
+    scraper = cloudscraper.create_scraper()
+
+    # 获取页面
+    url = "https://www.reuters.com/world/china/"
+    response = scraper.get(url)
+
+    # 获取页面 HTML
+    page_html = response.text
+
+    print(page_html[:2000])
+
+    # 解析 HTML
+    tree = html.fromstring(page_html)
+
+    # 定义两个 XPath 表达式
+    xpath_1 = "//li[contains(@class, 'list-item')]//h3[@data-testid='Heading']//a/font/font"
+    xpath_2 = "//li[contains(@class, 'list-item')]//a[@data-testid='Heading']/font/font"
+
+    # 执行 XPath 查询
+    elements_1 = tree.xpath(xpath_1)
+    elements_2 = tree.xpath(xpath_2)
+
+    # 提取文本内容
+    news_titles_1 = [element.text.strip() for element in elements_1]
+    news_titles_2 = [element.text.strip() for element in elements_2]
+
+    # 合并两个列表
+    news_titles = news_titles_1 + news_titles_2
+
+    # 打印新闻标题
+    for title in news_titles:
+        print(title)
 
 
 # 爬取路透社新闻标题
@@ -80,7 +119,7 @@ def send_telegram_message(message):
 
 
 # 主流程
-def main():
+def main2():
     old_news = set(load_old_data())
     new_news = set(fetch_news())
 
@@ -97,4 +136,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    cf()
