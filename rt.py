@@ -18,6 +18,8 @@ TG_CHAT_ID = "your-telegram-chat-id"
 # 初始化 Selenium WebDriver
 def init_driver():
     options = Options()
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36")
     options.add_argument("--headless")  # 无头模式
     options.add_argument("--disable-gpu")  # 禁用 GPU 加速
     options.add_argument("--no-sandbox")  # 解决 root 权限问题
@@ -30,13 +32,15 @@ def init_driver():
 def fetch_news():
     driver = init_driver()
     driver.get("https://www.reuters.com/world/china/")
-    time.sleep(5)  # 等待加载
+    time.sleep(10)  # 等待加载
+    print(driver.page_source[:1000])  # 只打印前1000个字符，防止输出过长
 
     # 使用 XPath 查找新闻标题
     xpath_1 = "//li[contains(@class, 'list-item')]//h3[@data-testid='Heading']//a/font/font"
     xpath_2 = "//li[contains(@class, 'list-item')]//a[@data-testid='Heading']/font/font"
 
     elements = driver.find_elements(By.XPATH, f"{xpath_1} | {xpath_2}")
+    print(f"找到 {len(elements)} 个元素")
     news_titles = [element.text.strip() for element in elements if element.text.strip()]
     print(news_titles)
     driver.quit()
