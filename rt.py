@@ -1,11 +1,12 @@
 import json
 import os
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+# from selenium import webdriver
+# from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
+import undetected_chromedriver as uc
 import requests
 
 # 配置路径
@@ -17,14 +18,21 @@ TG_CHAT_ID = "your-telegram-chat-id"
 
 # 初始化 Selenium WebDriver
 def init_driver():
-    options = Options()
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36")
-    options.add_argument("--headless")  # 无头模式
-    options.add_argument("--disable-gpu")  # 禁用 GPU 加速
-    options.add_argument("--no-sandbox")  # 解决 root 权限问题
-    options.add_argument("--disable-dev-shm-usage")  # 解决部分 Linux 运行问题
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    # options = Options()
+    # options.add_argument(
+    #     "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36")
+    # options.add_argument("--headless")  # 无头模式
+    # options.add_argument("--disable-gpu")  # 禁用 GPU 加速
+    # options.add_argument("--no-sandbox")  # 解决 root 权限问题
+    # options.add_argument("--disable-dev-shm-usage")  # 解决部分 Linux 运行问题
+    # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    options = uc.ChromeOptions()
+    options.binary_location = "/usr/bin/google-chrome"  # GitHub Actions 可能需要这个
+    options.headless = True  # 以无头模式运行
+
+    driver = uc.Chrome(options=options)
+
     return driver
 
 
@@ -33,7 +41,8 @@ def fetch_news():
     driver = init_driver()
     driver.get("https://www.reuters.com/world/china/")
     time.sleep(10)  # 等待加载
-    print(driver.page_source[:1000])  # 只打印前1000个字符，防止输出过长
+    print(driver.page_source[:2000])  # 只打印前1000个字符，防止输出过长
+    # 将整个xml内容写入json
 
     # 使用 XPath 查找新闻标题
     xpath_1 = "//li[contains(@class, 'list-item')]//h3[@data-testid='Heading']//a/font/font"

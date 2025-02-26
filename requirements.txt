@@ -1,3 +1,5 @@
 selenium
-webdriver-manager
+undetected-chromedriver
+cloudscraper
+beautifulsoup4
 requests
