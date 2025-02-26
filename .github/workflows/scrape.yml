@@ -25,31 +25,33 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.10'
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install selenium translate
+      run: pip install -r requirements.txt
 
     - name: Install Chromium and ChromeDriver
       run: |
         sudo apt-get update
         sudo apt-get install -y chromium-browser chromium-chromedriver
-        # 确保 ChromeDriver 在 PATH 中
         sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
 
     - name: Run scrape script
-      run: python scrape_news.py
+      run: python testReq.py
 
-    - name: Commit and push results
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-        git add file/china_news_titles.txt
-        git commit -m "Update China news titles" || echo "No changes to commit"
-        git push
-      continue-on-error: true  # 如果没有变化，跳过错误
+    - name: Set up Git configuration
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+    - name: Commit and push changes
+        run: |
+          git add file/china_news_titles.txt
+          git commit -m "Update China news titles" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # github默认的
+        continue-on-error: true  # 如果没有变化，跳过错误
 
         # GitHub Actions 默认使用 actions/checkout@v3 时，会自动配置 GITHUB_TOKEN，可直接推送到同一仓库，无需额外 Token。但要确保：
         #GitHub Actions 运行在 main 分支（或你设定的分支）。
