@@ -40,18 +40,18 @@ jobs:
       run: python testReq.py
 
     - name: Set up Git configuration
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
 
     - name: Commit and push changes
-        run: |
-          git add file/china_news_titles.txt
-          git commit -m "Update China news titles" || echo "No changes to commit"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # github默认的
-        continue-on-error: true  # 如果没有变化，跳过错误
+      run: |
+        git add file/china_news_titles.txt
+        git commit -m "Update China news titles" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # github默认的
+      continue-on-error: true  # 如果没有变化，跳过错误
 
         # GitHub Actions 默认使用 actions/checkout@v3 时，会自动配置 GITHUB_TOKEN，可直接推送到同一仓库，无需额外 Token。但要确保：
         #GitHub Actions 运行在 main 分支（或你设定的分支）。
