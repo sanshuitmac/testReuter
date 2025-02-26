@@ -1,5 +1,5 @@
 selenium
-undetected_chromedriver
+undetected-chromedriver
 cloudscraper
 beautifulsoup4
 requests
