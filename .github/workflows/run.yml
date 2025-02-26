@@ -1,0 +1,38 @@
+name: Selenium
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    # IMPORTANT: Set cron job in UTC timezone 。+8才是北京时间，每天10点05分
+    - cron: '05 2,14 * * *'
+  watch:
+    types: started
+
+jobs:
+  selenium-crawler:
+    runs-on: ubuntu-latest
+
+    # 定时，或者自己点击star则运行此workflow
+    if: github.event_name == 'schedule' || github.event_name == 'watch' && github.event.repository.owner.id == github.event.sender.id
+
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        options: --shm-size=2g
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3
+
+      - name: install pip
+        run: |
+          pip install -r requirements.txt
+
+      - name: start run
+        run: |
+          python script.py
